@@ -1,224 +1,179 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(ToofanApp());
+void main() => runApp(const ToofanApp());
 
 class ToofanApp extends StatelessWidget {
+  const ToofanApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen());
-  }
-}
-
-// SPLASH
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration(seconds: 2), () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())));
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.shield_moon, size: 100, color: Colors.greenAccent),
-        Text("TOOFAN", style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
-        Text("OWNER ULTRA SECURE", style: TextStyle(color: Colors.greenAccent, letterSpacing: 2)),
-        SizedBox(height: 20),
-        Text("ANTI-HACK SYSTEM ACTIVE", style: TextStyle(color: Colors.green, fontSize: 12)),
-      ])),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFF5F7FB)),
+      home: const ToofanHome(),
     );
   }
 }
 
-// LOGIN WITH HACK DETECTION
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-class _LoginScreenState extends State<LoginScreen> {
-  int wrongAttempts = 0;
-  bool isBlocked = false;
-  TextEditingController passCtrl = TextEditingController();
-  
-  void checkLogin() {
-    if(passCtrl.text == "owner123" || passCtrl.text == "1234") { // Owner ka password
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OwnerMasterSecurity()));
-    } else {
-      setState(() { wrongAttempts++; });
-      if(wrongAttempts >= 3) {
-        setState(() => isBlocked = true);
-        // Yahan Owner ko Alert jayega
-        showDialog(context: context, builder: (_) => AlertDialog(
-          title: Text("🚨 HACK ATTEMPT DETECTED!"),
-          content: Text("3 galat koshishein! Ye device block kar diya gaya hai. Owner ko alert bhej diya gaya hai.\n\nIP: 192.168.1.10\nLocation: Lahore\nDevice: Android"),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text("OK"))],
-        ));
-      }
-    }
-  }
+class ToofanHome extends StatelessWidget {
+  const ToofanHome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(padding: EdgeInsets.all(24), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.admin_panel_settings, size: 70, color: Colors.black),
-        Text("TOOFAN OWNER LOGIN", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        Text("High Level Security", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-        SizedBox(height: 20),
-        if(isBlocked) Container(color: Colors.red, padding: EdgeInsets.all(10), child: Text("DEVICE BLOCKED - Owner Approval Needed", style: TextStyle(color: Colors.white))),
-        SizedBox(height: 20),
-        TextField(decoration: InputDecoration(labelText: "Owner ID", border: OutlineInputBorder(), prefixIcon: Icon(Icons.person_pin)), enabled: !isBlocked),
-        SizedBox(height: 15),
-        TextField(controller: passCtrl, obscureText: true, decoration: InputDecoration(labelText: "Owner Master Password", border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock)), enabled: !isBlocked),
-        SizedBox(height: 10),
-        Text("Wrong Attempts: $wrongAttempts / 3", style: TextStyle(color: Colors.red)),
-        SizedBox(height: 20),
-        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.black, minimumSize: Size(double.infinity, 50)), onPressed: isBlocked ? null : checkLogin, child: Text("UNLOCK WITH OWNER SECURITY", style: TextStyle(color: Colors.white))),
-        SizedBox(height: 10),
-        OutlinedButton.icon(icon: Icon(Icons.fingerprint), label: Text("Owner Biometric (Level 2)"), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OwnerMasterSecurity()))),
-      ])),
-    );
-  }
-}
+      body: SafeArea(
+        child: Column(
+          children: [
+            // HEADER - TOOFAN
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  const Text("🌪️", style: TextStyle(fontSize: 28)),
+                  const SizedBox(width: 5),
+                  const Text("TOOFAN", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF0E8ACB))),
+                  const Spacer(),
+                  _topIcon(Icons.call),
+                  _topIcon(Icons.videocam),
+                  _topIcon(Icons.search),
+                  _topIcon(Icons.chat_bubble_outline),
+                  _topIcon(Icons.notifications),
+                  _topIcon(Icons.account_circle_outlined),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(12),
+                children: [
+                  // STORIES
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: _box(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Your Story", style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 12),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _story("Your Story", Icons.add, isAdd: true),
+                              _story("Aiza", null),
+                              _story("Bilal", null),
+                              _story("Zara", null),
+                              _story("Omar", null),
+                              _story("Mina", null),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
-// OWNER MASTER SECURITY - SIRF OWNER KHOL SAKTA HAI
-class OwnerMasterSecurity extends StatefulWidget {
-  @override
-  _OwnerMasterSecurityState createState() => _OwnerMasterSecurityState();
-}
-class _OwnerMasterSecurityState extends State<OwnerMasterSecurity> {
-  bool level1 = true, level2 = false, level3 = false;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("OWNER MASTER CONTROL"), backgroundColor: Colors.black, foregroundColor: Colors.greenAccent),
-      body: ListView(padding: EdgeInsets.all(15), children: [
-        Container(padding: EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.greenAccent)), child: Column(children: [
-          Icon(Icons.verified_user, color: Colors.greenAccent, size: 50),
-          Text("OWNER SECURITY STATUS", style: TextStyle(color: Colors.greenAccent)),
-          Text("LEVEL 3 - MAXIMUM", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-          Text("HACK PROOF: ACTIVE ✓", style: TextStyle(color: Colors.green)),
-        ])),
-        SizedBox(height: 15),
-        Text("OWNER HIGH SECURITY LEVELS:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        Card(color: level1 ? Colors.green[50] : null, child: ListTile(leading: Icon(Icons.lock, color: level1 ? Colors.green : Colors.grey), title: Text("Level 1: Master Password"), subtitle: Text("owner123 - Changed 2 days ago"), trailing: Icon(Icons.check_circle, color: Colors.green))),
-        Card(color: level2 ? Colors.green[50] : null, child: ListTile(leading: Icon(Icons.fingerprint, color: level2 ? Colors.green : Colors.grey), title: Text("Level 2: Biometric + Face ID"), subtitle: Text("Only Owner Fingerprint"), trailing: Switch(value: level2, onChanged: (v) => setState(() => level2 = v)))),
-        Card(color: level3 ? Colors.green[50] : null, child: ListTile(leading: Icon(Icons.pattern, color: level3 ? Colors.green : Colors.grey), title: Text("Level 3: Secret Pattern"), subtitle: Text("Custom Draw Pattern"), trailing: Switch(value: level3, onChanged: (v) => setState(() => level3 = v)))),
-        
-        SizedBox(height: 20),
-        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: Size(double.infinity, 50)), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MainApp())), child: Text("ENTER TOOFAN APP AS OWNER 👑", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-        
-        SizedBox(height: 20),
-        Text("SECURITY SUCCESS - OWNER KO SAB PATA CHALEGA:", style: TextStyle(fontWeight: FontWeight.bold)),
-        Card(child: ListTile(leading: Icon(Icons.warning, color: Colors.red), title: Text("Hack Attempts Today: 3 Blocked"), subtitle: Text("Device: Samsung A32 - Location: Karachi - Time: 10:23 AM"), trailing: Icon(Icons.block, color: Colors.red))),
-        Card(child: ListTile(leading: Icon(Icons.devices, color: Colors.blue), title: Text("New Device Login Request"), subtitle: Text("iPhone 13 - Approval Pending"), trailing: ElevatedButton(onPressed: (){}, child: Text("Approve/Reject")))),
-        Card(child: ListTile(leading: Icon(Icons.location_on, color: Colors.orange), title: Text("All Users Location Access"), subtitle: Text("Owner can see all 128 members location"), trailing: Icon(Icons.visibility))),
-      ]),
-    );
-  }
-}
+                  // WHAT'S HAPPENING
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: _box(),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(backgroundColor: Color(0xFF0E8ACB), child: Icon(Icons.person, color: Colors.white)),
+                        const SizedBox(width: 10),
+                        const Expanded(child: Text("What's happening?", style: TextStyle(color: Colors.grey))),
+                        Icon(Icons.image, color: Colors.blue.shade400),
+                        const SizedBox(width: 8),
+                        Icon(Icons.attach_file, color: Colors.blue.shade400),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
-// MAIN APP - OWNER MODE
-class MainApp extends StatefulWidget {
-  @override
-  _MainAppState createState() => _MainAppState();
-}
-class _MainAppState extends State<MainApp> {
-  int _currentIndex = 0;
-  final screens = [HomeDashboard(), VideoDashboard(), OwnerHackMonitor(), FamilyDashboard(), SocietyDashboard(), OwnerControlPanel()];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Row(children: [Icon(Icons.shield, color: Colors.greenAccent), SizedBox(width: 5), Text("TOOFAN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Container(margin: EdgeInsets.only(left: 10), padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)), child: Text("OWNER", style: TextStyle(fontSize: 10, color: Colors.white)))]),
-        actions: [
-          IconButton(icon: Icon(Icons.security, color: Colors.greenAccent), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OwnerHackMonitor()))),
-          IconButton(icon: Icon(Icons.notifications_active, color: Colors.red), onPressed: () {}),
-          CircleAvatar(backgroundColor: Colors.green, child: Text("O", style: TextStyle(color: Colors.white)), radius: 16),
-          SizedBox(width: 10),
-        ],
+                  // POST - Sara Khan
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: _box(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const CircleAvatar(radius: 22, backgroundImage: NetworkImage("https://i.pravatar.cc/100?img=5")),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text("Sara Khan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                Text("2 hours ago • Public", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                              ],
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        const Text("Community Cleanup", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0B2E5B))),
+                        const Text("Join us this Saturday at Central Park for the community cleanup drive! Let's make our neighborhood cleaner together. 🌿📦"),
+                        const SizedBox(height: 10),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network("https://images.unsplash.com/photo-1559027615-cd4628902d4a", height: 180, width: double.infinity, fit: BoxFit.cover),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(child: ElevatedButton.icon(onPressed: (){}, icon: const Icon(Icons.call), label: const Text("Call"), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0E8ACB), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))))),
+                            const SizedBox(width: 10),
+                            Expanded(child: ElevatedButton.icon(onPressed: (){}, icon: const Icon(Icons.chat_bubble), label: const Text("Chat"), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0E8ACB), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))))),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // SECURITY ALERT (Aapka wala)
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), border: Border.all(color: Colors.red), borderRadius: BorderRadius.circular(12)),
+                    child: Row(children: const [
+                      Icon(Icons.warning_amber, color: Colors.red, size: 40),
+                      SizedBox(width: 10),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text("SECURITY ALERT", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                        Text("3 Hack Attempts Blocked Today - Sab Owner Ko Pata Chal Gaya", style: TextStyle(color: Colors.red)),
+                      ]))
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+            // BOTTOM NAV
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _bottom(Icons.home, "Home", true),
+                  _bottom(Icons.video_library_outlined, "Video", false),
+                  _bottom(Icons.explore_outlined, "Explore", false),
+                  _bottom(Icons.family_restroom, "Family", false),
+                  _bottom(Icons.groups_outlined, "Society", false),
+                  _bottom(Icons.person_outline, "Profile", false),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
-      body: screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex, onTap: (i) => setState(() => _currentIndex = i),
-        type: BottomNavigationBarType.fixed, selectedItemColor: Colors.black, unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.video_library), label: "Video"),
-          BottomNavigationBarItem(icon: Icon(Icons.shield), label: "Hack Monitor"),
-          BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: "Family"),
-          BottomNavigationBarItem(icon: Icon(Icons.home_work), label: "Society"),
-          BottomNavigationBarItem(icon: Icon(Icons.admin_panel_settings), label: "Owner Panel"),
-        ],
-      ),
     );
   }
-}
 
-// OWNER HACK MONITOR - Koi hack kare to yahan ayega
-class OwnerHackMonitor extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView(padding: EdgeInsets.all(15), children: [
-      Container(padding: EdgeInsets.all(15), color: Colors.red[50], child: Row(children: [Icon(Icons.warning_amber, color: Colors.red, size: 40), SizedBox(width: 10), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("SECURITY ALERT", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)), Text("3 Hack Attempts Blocked Today - Sab Owner Ko Pata Chal Gaya", style: TextStyle(color: Colors.red))])))])),
-      SizedBox(height: 10),
-      Text("LIVE HACK ATTEMPTS LOG:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-      hackLog("FAILED LOGIN", "192.168.1.15 - Karachi", "10:23 AM - Blocked", Colors.red),
-      hackLog("WRONG BIOMETRIC", "Unknown Device - Lahore", "09:15 AM - Blocked", Colors.orange),
-      hackLog("ROOT DETECTED", "Samsung - Jailbreak Try", "08:00 AM - App Locked", Colors.red),
-      SizedBox(height: 15),
-      Text("ALL DEVICES - Owner Control:", style: TextStyle(fontWeight: FontWeight.bold)),
-      deviceLog("Owner Device - This Phone", "Lahore - Active Now - TRUSTED ✓", Colors.green),
-      deviceLog("Aiza's Phone", "Karachi - Active 2m ago - Family", Colors.blue),
-      deviceLog("Unknown Device", "Islamabad - Login Request - PENDING", Colors.orange),
-      SizedBox(height: 15),
-      ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.black, minimumSize: Size(double.infinity, 50)), onPressed: (){}, child: Text("🔒 BLOCK ALL UNKNOWN DEVICES", style: TextStyle(color: Colors.white))),
-    ]);
-  }
-  Widget hackLog(String title, String loc, String time, Color c) {
-    return Card(child: ListTile(leading: CircleAvatar(backgroundColor: c, child: Icon(Icons.block, color: Colors.white)), title: Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: c)), subtitle: Text("$loc\n$time"), isThreeLine: true, trailing: Icon(Icons.check_circle, color: Colors.green)));
-  }
-  Widget deviceLog(String name, String status, Color c) {
-    return Card(child: ListTile(leading: Icon(Icons.phone_android, color: c), title: Text(name), subtitle: Text(status), trailing: Icon(Icons.more_vert)));
-  }
-}
-
-// Baki Dashboards
-class HomeDashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView(padding: EdgeInsets.all(10), children: [
-      Container(padding: EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.green[50], borderRadius: BorderRadius.circular(10)), child: Row(children: [Icon(Icons.verified_user, color: Colors.green), SizedBox(width: 10), Text("Owner Mode: All Activities Visible To You", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))])),
-      SizedBox(height: 10),
-      Card(child: ListTile(leading: CircleAvatar(child: Icon(Icons.person)), title: Text("Sara Khan • Public Post"), subtitle: Text("Owner can see IP & Location"), trailing: Icon(Icons.shield, color: Colors.green))),
-    ]);
-  }
-}
-class VideoDashboard extends StatelessWidget { @override Widget build(BuildContext context) { return Center(child: Text("Video - Encrypted & Owner Monitored")); } }
-class FamilyDashboard extends StatelessWidget { @override Widget build(BuildContext context) { return Center(child: Text("Family - Live Location - Only Owner & Family Can See")); } }
-class SocietyDashboard extends StatelessWidget { @override Widget build(BuildContext context) { return Center(child: Text("Society - 128 Members - Owner Has Full Control")); } }
-
-class OwnerControlPanel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView(padding: EdgeInsets.all(15), children: [
-      Text("👑 OWNER ULTRA CONTROL", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      SizedBox(height: 10),
-      Card(color: Colors.black, child: ListTile(leading: Icon(Icons.shield_moon, color: Colors.greenAccent), title: Text("Owner Security: MAX LEVEL", style: TextStyle(color: Colors.white)), subtitle: Text("No One Can Hack Owner - 3 Layer Protection", style: TextStyle(color: Colors.greenAccent)), trailing: Text("SUCCESS ✓", style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)))),
-      ListTile(leading: Icon(Icons.visibility), title: Text("See All Users Data"), subtitle: Text("Owner can see every message, location, login")),
-      ListTile(leading: Icon(Icons.block), title: Text("Block Any User Instantly")),
-      ListTile(leading: Icon(Icons.delete_forever, color: Colors.red), title: Text("Delete Any Post - Owner Power")),
-      ListTile(leading: Icon(Icons.lock), title: Text("Change Owner Master Password")),
-      ListTile(leading: Icon(Icons.fingerprint), title: Text("Update Biometric")),
-      ListTile(leading: Icon(Icons.logout, color: Colors.red), title: Text("Secure Owner Logout - Wipe Temp Data")),
-    ]);
-  }
+  static Widget _topIcon(IconData icon) => Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: Icon(icon, color: const Color(0xFF0E8ACB), size: 22));
+  static BoxDecoration _box() => BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)]);
+  static Widget _story(String name, IconData? icon, {bool isAdd = false}) => Padding(padding: const EdgeInsets.only(right: 14), child: Column(children: [
+    Container(padding: const EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFF0E8ACB), width: 2)), child: CircleAvatar(radius: 26, backgroundColor: Colors.grey.shade200, child: isAdd ? const Icon(Icons.add, color: Color(0xFF0E8ACB)) : const Icon(Icons.person))),
+    const SizedBox(height: 4),
+    Text(name, style: const TextStyle(fontSize: 12))
+  ]));
+  static Widget _bottom(IconData icon, String label, bool active) => Column(children: [Icon(icon, color: active ? const Color(0xFF0E8ACB) : Colors.grey), Text(label, style: TextStyle(fontSize: 11, color: active ? const Color(0xFF0E8ACB) : Colors.grey, fontWeight: active ? FontWeight.bold : FontWeight.normal))]);
 }
