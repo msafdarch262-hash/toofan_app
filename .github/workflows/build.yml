@@ -8,8 +8,14 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
+          channel: 'stable'
+      - name: Create Android folder
+        run: |
+          flutter create temp_project --platforms=android --project-name toofan_app
+          cp -r temp_project/android ./
+          rm -rf temp_project
       - run: flutter pub get
-      - run: flutter build apk --release
+      - run: flutter build apk --release --project .
       - uses: actions/upload-artifact@v4
         with:
           name: TOOFAN-APK
