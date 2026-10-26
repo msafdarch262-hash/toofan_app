@@ -1,7 +1,5 @@
 name: Build TOOFAN APK
-on:
-  push:
-    branches: [ main ]
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,9 +7,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.6'
+          channel: stable
       - run: rm -rf android
-      - run: flutter create . --platforms=android --org com.toofan.app
+      - run: flutter create . --platforms=android
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
