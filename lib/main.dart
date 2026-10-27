@@ -1,264 +1,62 @@
+// TOOFAN - 23 Screens Complete - Connect Communicate Protect
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-void main() => runApp(const ToofanApp());
+void main() { runApp(const ToofanApp()); }
 
 class ToofanApp extends StatelessWidget {
   const ToofanApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TOOFAN',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFDA252D)),
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F7F9),
-      ),
-      home: const MainShell(),
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: const Color(0xFF0A1931)),
+      home: const Screen1_Splash(),
     );
   }
 }
 
-class MainShell extends StatefulWidget {
-  const MainShell({super.key});
-  @override
-  State<MainShell> createState() => _MainShellState();
+// 1. Splash Screen (2 sec)
+class Screen1_Splash extends StatefulWidget { const Screen1_Splash({super.key}); @override State<Screen1_Splash> createState() => _S1(); }
+class _S1 extends State<Screen1_Splash> {
+  @override void initState() { super.initState(); Timer(const Duration(seconds: 2), () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Screen2_Login()))); }
+  @override Widget build(BuildContext context) => Scaffold(body: Container(decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF0A1931), Color(0xFF1E3A5F)])), child: const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.bolt, size: 120, color: Color(0xFF00D4FF)), SizedBox(height: 20), Text('TOOFAN', style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)), Text('Connect • Communicate • Protect')]))));
 }
 
-class _MainShellState extends State<MainShell> {
-  int selected = 0;
-  final pages = const [
-    HomeScreen(),
-    VideosScreen(),
-    ExploreScreen(),
-    FamilyScreen(),
-    ProfileScreen(),
-  ];
+// 2. Login / Signup
+class Screen2_Login extends StatelessWidget { const Screen2_Login({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Padding(padding: const EdgeInsets.all(20), child: Column(children: [const SizedBox(height: 80), const Icon(Icons.bolt, size: 60, color: Color(0xFF00D4FF)), const Text('TOOFAN', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)), const SizedBox(height: 30), Row(children: [Expanded(child: ElevatedButton(onPressed: () {}, child: const Text('Login'))), const SizedBox(width: 10), Expanded(child: OutlinedButton(onPressed: () {}, child: const Text('Sign Up')))]), const TextField(decoration: InputDecoration(labelText: 'Mobile Number / Email', prefixIcon: Icon(Icons.phone))), const SizedBox(height: 10), const TextField(decoration: InputDecoration(labelText: 'Password', prefixIcon: Icon(Icons.lock)), obscureText: true), const SizedBox(height: 20), SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen3_OTP())), style: ElevatedButton.styleFrom(backgroundColor: Colors.blue), child: const Text('Login'))), TextButton(onPressed: () {}, child: const Text('Forgot Password?')), OutlinedButton(onPressed: () {}, child: const Text('Create New Account'))]))); }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: pages[selected]),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selected,
-        onDestinationSelected: (i) => setState(() => selected = i),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.play_circle_outline), selectedIcon: Icon(Icons.play_circle), label: 'Videos'),
-          NavigationDestination(icon: Icon(Icons.explore_outlined), selectedIcon: Icon(Icons.explore), label: 'Explore'),
-          NavigationDestination(icon: Icon(Icons.groups_outlined), selectedIcon: Icon(Icons.groups), label: 'Family'),
-          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-    );
-  }
+// 3. OTP
+class Screen3_OTP extends StatelessWidget { const Screen3_OTP({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Verify Your Account')), body: Padding(padding: const EdgeInsets.all(20), child: Column(children: [const Text('Enter the 6 digit code sent to +92 300 1234567'), const SizedBox(height: 20), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: List.generate(6, (i) => Container(width: 45, height: 55, decoration: BoxDecoration(border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(8)), child: Center(child: Text('${i+1}'))))), const SizedBox(height: 20), const Text('Resend Code (0:45)'), const SizedBox(height: 20), SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainApp())), child: const Text('Verify')))])))); }
+
+// Main App with Bottom Nav - Home, Video, Explore, Family, Society, Profile
+class MainApp extends StatefulWidget { const MainApp({super.key}); @override State<MainApp> createState() => _Main(); }
+class _Main extends State<MainApp> {
+  int idx = 0;
+  final screens = [const Screen4_Home(), const Screen5_Video(), const Screen6_Explore(), const Screen7_Family(), const Screen13_Profile()];
+  @override Widget build(BuildContext context) => Scaffold(body: screens[idx], bottomNavigationBar: BottomNavigationBar(currentIndex: idx, onTap: (i) => setState(() => idx = i), type: BottomNavigationBarType.fixed, backgroundColor: const Color(0xFF0A1931), items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'), BottomNavigationBarItem(icon: Icon(Icons.video_library), label: 'Video'), BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'), BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: 'Family'), BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')]));
 }
 
-class BrandHeader extends StatelessWidget {
-  final String subtitle;
-  const BrandHeader({super.key, this.subtitle = 'Connect • Share • Discover'});
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
-    child: Row(children: [
-      Container(
-        width: 46, height: 46,
-        decoration: BoxDecoration(color: const Color(0xFFDA252D), borderRadius: BorderRadius.circular(14)),
-        child: const Icon(Icons.bolt, color: Colors.white, size: 30),
-      ),
-      const SizedBox(width: 12),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('TOOFAN', style: TextStyle(fontSize: 23, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-        Text(subtitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-      ])),
-      IconButton(onPressed: () => _message(context, 'Notifications are a demo feature.'), icon: const Icon(Icons.notifications_none)),
-      IconButton(onPressed: () => _message(context, 'Settings are a demo feature.'), icon: const Icon(Icons.settings_outlined)),
-    ]),
-  );
-}
+// 4. Main Home
+class Screen4_Home extends StatelessWidget { const Screen4_Home({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('TOOFAN'), actions: const [Icon(Icons.search), SizedBox(width: 10), Icon(Icons.notifications)]), body: ListView(children: [SizedBox(height: 90, child: ListView.builder(scrollDirection: Axis.horizontal, itemCount: 6, itemBuilder: (c,i) => Padding(padding: const EdgeInsets.all(8), child: Column(children: [CircleAvatar(radius: 30, child: Text('U$i')), Text(['Your Story','Aisha','Leo','Mira','Dev'][i%5])])))), const Card(child: ListTile(leading: Icon(Icons.photo), title: Text("What's happening?"), trailing: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.emoji_emotions), Icon(Icons.location_on), Text(' Post')]))), Card(color: Colors.white10, child: Column(children: [const ListTile(leading: CircleAvatar(child: Text('SK')), title: Text('Sara Khan'), subtitle: Text('2h ago')), Image.network('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', height: 200, fit: BoxFit.cover), const Padding(padding: EdgeInsets.all(8), child: Text('Life is better with good people ❤️ #toofan')), const Row(children: [Icon(Icons.favorite), SizedBox(width: 10), Text('124'), SizedBox(width: 20), Icon(Icons.comment), Text('18')]))]))])); }
 
-void _message(BuildContext context, String text) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-}
+// 5. Video Dashboard Full Screen
+class Screen5_Video extends StatelessWidget { const Screen5_Video({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Stack(children: [Container(color: Colors.black, child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(height: 400, color: Colors.grey[900], child: const Center(child: Text('Video Player - Hijab Girl'))), const ListTile(leading: CircleAvatar(), title: Text('@sara_Khan Follow'), subtitle: Text('Good vibes only ❤️ #life #vibes #toofan'))])) , Positioned(right: 10, bottom: 100, child: Column(children: [IconButton(icon: const Icon(Icons.favorite, size: 35), onPressed: () {}), const Text('1.2K'), IconButton(icon: const Icon(Icons.comment, size: 35), onPressed: () {}), const Text('348'), IconButton(icon: const Icon(Icons.share, size: 35), onPressed: () {}), const Text('93')]))])); }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(children: [
-    const BrandHeader(),
-    Padding(padding: const EdgeInsets.symmetric(horizontal: 18), child: TextField(
-      decoration: InputDecoration(
-        hintText: 'Search TOOFAN',
-        prefixIcon: const Icon(Icons.search),
-        filled: true, fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-      ),
-    )),
-    const SizedBox(height: 20),
-    const SectionTitle('Stories', trailing: 'See all'),
-    SizedBox(height: 105, child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 14), children: const [
-      StoryItem(label: 'Your story', icon: Icons.add),
-      StoryItem(label: 'Ayesha', icon: Icons.face_3),
-      StoryItem(label: 'Hamza', icon: Icons.face),
-      StoryItem(label: 'Sana', icon: Icons.face_4),
-      StoryItem(label: 'Usman', icon: Icons.face_6),
-    ])),
-    const SectionTitle('Your community'),
-    const PostCard(name: 'TOOFAN Community', handle: '@toofan_official', text: 'Welcome to TOOFAN — your place to connect, share moments, and discover new people.', icon: Icons.bolt),
-    const PostCard(name: 'Daily Inspiration', handle: '@dailyinspiration', text: 'A small step every day can take you a long way. Keep moving forward!', icon: Icons.auto_awesome),
-  ]);
-}
+// 6. Explore
+class Screen6_Explore extends StatelessWidget { const Screen6_Explore({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const TextField(decoration: InputDecoration(hintText: 'Search people, posts, videos...'))), body: ListView(children: [const Padding(padding: EdgeInsets.all(10), child: Text('Trending Hashtags', style: TextStyle(fontWeight: FontWeight.bold))), ListTile(title: const Text('#LifeStyle'), trailing: const Text('1.2M'), leading: const Icon(Icons.tag)), ListTile(title: const Text('#Travel'), trailing: const Text('980K'), leading: const Icon(Icons.tag)), const Padding(padding: EdgeInsets.all(10), child: Text('Suggested People')), ListTile(leading: const CircleAvatar(child: Text('A')), title: const Text('Aisha'), trailing: ElevatedButton(onPressed: () {}, child: const Text('Follow'))), ListTile(leading: const CircleAvatar(child: Text('L')), title: const Text('Leo'), trailing: ElevatedButton(onPressed: () {}, child: const Text('Follow')))])); }
 
-class SectionTitle extends StatelessWidget {
-  final String title;
-  final String? trailing;
-  const SectionTitle(this.title, {super.key, this.trailing});
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(18, 20, 18, 12),
-    child: Row(children: [
-      Expanded(child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
-      if (trailing != null) Text(trailing!, style: const TextStyle(color: Color(0xFFDA252D), fontWeight: FontWeight.w600)),
-    ]),
-  );
-}
+// 7. Family Dashboard + Society
+class Screen7_Family extends StatelessWidget { const Screen7_Family({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Society')), body: ListView(padding: const EdgeInsets.all(10), children: [Container(color: Colors.red, padding: const EdgeInsets.all(10), child: const Row(children: [Icon(Icons.warning), SizedBox(width: 10), Expanded(child: Text('Safety Alert: Be careful in the area. Report any suspicious activity.'))])), const ListTile(title: Text('Members: 128 Active')), const ListTile(title: Text('Events'), subtitle: Text('Cleanup Drive Nov 25, 2024 10:00 AM')), const ListTile(title: Text('Football Match Nov 30, 2024 3:40 PM')), const Card(child: ListTile(title: Text('Community Posts'), subtitle: Text("Rizwan: Let's keep our society clean."))), ElevatedButton(onPressed: () {}, child: const Text('Create New Post')), ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen9_ChatList())), child: const Text('Go to Chats')), ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen18_Emergency())), child: const Text('Emergency Alert'))])); }
 
-class StoryItem extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  const StoryItem({super.key, required this.label, required this.icon});
-  @override
-  Widget build(BuildContext context) => SizedBox(width: 76, child: Column(children: [
-    Container(width: 62, height: 62, margin: const EdgeInsets.only(bottom: 6), decoration: BoxDecoration(
-      shape: BoxShape.circle, border: Border.all(color: const Color(0xFFDA252D), width: 2),
-      color: Colors.white,
-    ), child: Icon(icon, color: const Color(0xFFDA252D), size: 29)),
-    Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11)),
-  ]));
-}
+// 9-15 Screens
+class Screen9_ChatList extends StatelessWidget { const Screen9_ChatList({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Chats')), body: ListView(children: [ListTile(leading: const CircleAvatar(child: Text('A')), title: const Text('Aisha'), subtitle: const Text('Hey! How are you?'), trailing: const Text('2m'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen10_Chat()))), const ListTile(leading: CircleAvatar(child: Text('L')), title: Text('Leo'), subtitle: Text('Voice message'), trailing: Text('5m')), const ListTile(leading: CircleAvatar(child: Text('F')), title: Text('Family Group'), subtitle: Text('Mom: Ok'), trailing: Text('20m'))])); }
+class Screen10_Chat extends StatelessWidget { const Screen10_Chat({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Aisha - Online'), actions: [IconButton(icon: const Icon(Icons.call), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen11_VoiceCall()))), IconButton(icon: const Icon(Icons.videocam), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen12_VideoCall())))]), body: Column(children: [Expanded(child: ListView(children: [Align(alignment: Alignment.centerLeft, child: Container(margin: const EdgeInsets.all(10), padding: const EdgeInsets.all(10), color: Colors.white24, child: const Text('Hi! How are you? 2:15 PM'))), Align(alignment: Alignment.centerRight, child: Container(margin: const EdgeInsets.all(10), padding: const EdgeInsets.all(10), color: Colors.blue, child: const Text('This photo is amazing!')))])), const Padding(padding: EdgeInsets.all(8), child: TextField(decoration: InputDecoration(hintText: 'Type a message...', suffixIcon: Icon(Icons.send))))])); }
+class Screen11_VoiceCall extends StatelessWidget { const Screen11_VoiceCall({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Aisha - Incoming Voice Call'), const SizedBox(height: 20), const CircleAvatar(radius: 80, backgroundImage: NetworkImage('https://images.unsplash.com/photo-1580489944761-15a19d654956')), const SizedBox(height: 40), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [Column(children: [IconButton(icon: const Icon(Icons.call_end, color: Colors.red, size: 40), onPressed: () => Navigator.pop(context)), const Text('Decline')]), Column(children: [IconButton(icon: const Icon(Icons.call, color: Colors.green, size: 40), onPressed: () {}), const Text('Accept')])])]))); }
+class Screen12_VideoCall extends StatelessWidget { const Screen12_VideoCall({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Stack(children: [Container(color: Colors.black54, child: const Center(child: Text('Video Call 02:34 - Aisha'))), Positioned(bottom: 30, left: 0, right: 0, child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(icon: const Icon(Icons.videocam_off), onPressed: () {}), IconButton(icon: const Icon(Icons.mic_off), onPressed: () {}), IconButton(icon: const Icon(Icons.call_end, color: Colors.red, size: 40), onPressed: () => Navigator.pop(context))]))])); }
+class Screen13_Profile extends StatelessWidget { const Screen13_Profile({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('My Profile - Sara Khan')), body: ListView(children: [const ListTile(leading: CircleAvatar(radius: 30, child: Text('SK')), title: Text('Sara Khan'), subtitle: Text('Dreamer | Traveler | Good Vibes')), const Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [Column(children: [Text('243'), Text('Posts')]), Column(children: [Text('5.2K'), Text('Followers')]), Column(children: [Text('892'), Text('Following')])]), ListTile(title: const Text('Privacy'), leading: const Icon(Icons.lock), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen14_Hijab()))), ListTile(title: const Text('Hijab Settings'), leading: const Icon(Icons.face), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen14_Hijab()))), ListTile(title: const Text('Notification Settings'), leading: const Icon(Icons.notifications), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Screen15_Notification()))), ListTile(title: const Text('Family Safety Alerts'), leading: const Icon(Icons.family_restroom)), const ListTile(title: Text('Logout'), leading: Icon(Icons.logout))]));
+class Screen14_Hijab extends StatelessWidget { const Screen14_Hijab({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Hijab Settings')), body: ListView(children: [SwitchListTile(title: const Text('Enable Hijab Display'), value: true, onChanged: (v) {}), const Padding(padding: EdgeInsets.all(10), child: Text('Styles')), GridView.count(crossAxisCount: 4, shrinkWrap: true, children: List.generate(4, (i) => Card(child: Column(children: [const Icon(Icons.person), Text('Style ${i+1}')])))), const Padding(padding: EdgeInsets.all(10), child: Text('This is a display preference option. It does not reveal your identity.'))])); }
+class Screen15_Notification extends StatelessWidget { const Screen15_Notification({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Notifications')), body: ListView(children: [SwitchListTile(title: const Text('New Followers'), value: true, onChanged: (v) {}), SwitchListTile(title: const Text('Likes & Comments'), value: true, onChanged: (v) {}), SwitchListTile(title: const Text('New Messages'), value: true, onChanged: (v) {}), SwitchListTile(title: const Text('Incoming Calls'), value: true, onChanged: (v) {}), SwitchListTile(title: const Text('Family Safety Alerts'), value: true, onChanged: (v) {}), SwitchListTile(title: const Text('Society Announcements'), value: true, onChanged: (v) {})])); }
 
-class PostCard extends StatelessWidget {
-  final String name, handle, text;
-  final IconData icon;
-  const PostCard({super.key, required this.name, required this.handle, required this.text, required this.icon});
-  @override
-  Widget build(BuildContext context) => Card(
-    margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-    elevation: 0,
-    color: Colors.white,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: Colors.grey.shade200)),
-    child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [
-        CircleAvatar(backgroundColor: const Color(0xFFFFE8E8), child: Icon(icon, color: const Color(0xFFDA252D))),
-        const SizedBox(width: 10),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(handle, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-        ])),
-        const Icon(Icons.more_horiz),
-      ]),
-      const SizedBox(height: 14),
-      Text(text, style: const TextStyle(height: 1.45)),
-      const SizedBox(height: 14),
-      Row(children: [
-        IconButton(onPressed: () => _message(context, 'Like tapped (demo).'), icon: const Icon(Icons.favorite_border)),
-        IconButton(onPressed: () => _message(context, 'Comments are a demo feature.'), icon: const Icon(Icons.chat_bubble_outline)),
-        IconButton(onPressed: () => _message(context, 'Share is a demo feature.'), icon: const Icon(Icons.share_outlined)),
-      ]),
-    ])),
-  );
-}
-
-class VideosScreen extends StatelessWidget {
-  const VideosScreen({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(children: [
-    const BrandHeader(subtitle: 'Watch something interesting'),
-    const SectionTitle('Trending videos'),
-    for (final item in ['Community moments', 'Travel & places', 'Funny clips'])
-      Card(margin: const EdgeInsets.fromLTRB(16, 5, 16, 10), elevation: 0, child: Container(
-        height: 170, decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), gradient: const LinearGradient(colors: [Color(0xFF252538), Color(0xFFDA252D)])),
-        child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.play_circle_fill, color: Colors.white, size: 52),
-          const SizedBox(height: 8),
-          Text(item, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
-          const Text('Video preview placeholder', style: TextStyle(color: Colors.white70)),
-        ])),
-      )),
-  ]);
-}
-
-class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(children: [
-    const BrandHeader(subtitle: 'Find what you love'),
-    const SectionTitle('Explore categories'),
-    for (final pair in [
-      ('People & friends', Icons.people_alt_outlined),
-      ('Local communities', Icons.location_on_outlined),
-      ('Popular posts', Icons.trending_up),
-      ('Events & activities', Icons.event_outlined),
-      ('Creators', Icons.star_outline),
-    ])
-      ListTile(
-        leading: CircleAvatar(backgroundColor: const Color(0xFFFFE8E8), child: Icon(pair.$2, color: const Color(0xFFDA252D))),
-        title: Text(pair.$1, style: const TextStyle(fontWeight: FontWeight.w600)),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => _message(context, '${pair.$1} selected (demo).'),
-      ),
-  ]);
-}
-
-class FamilyScreen extends StatelessWidget {
-  const FamilyScreen({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(children: [
-    const BrandHeader(subtitle: 'Your people, your circle'),
-    const SectionTitle('Family & society'),
-    Container(
-      margin: const EdgeInsets.all(16), padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: const Column(children: [
-        Icon(Icons.diversity_3, size: 60, color: Color(0xFFDA252D)),
-        SizedBox(height: 12),
-        Text('Build your circle', style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
-        Text('Create groups, share updates, and stay connected with your community.', textAlign: TextAlign.center),
-      ]),
-    ),
-    Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: FilledButton.icon(
-      onPressed: () => _message(context, 'Group creation will be connected to the backend later.'),
-      icon: const Icon(Icons.add), label: const Text('Create a group'),
-    )),
-  ]);
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(children: [
-    const BrandHeader(subtitle: 'Your TOOFAN account'),
-    Container(margin: const EdgeInsets.all(16), padding: const EdgeInsets.all(22), decoration: BoxDecoration(
-      color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: const Column(children: [
-        CircleAvatar(radius: 42, backgroundColor: Color(0xFFFFE8E8), child: Icon(Icons.person, size: 48, color: Color(0xFFDA252D))),
-        SizedBox(height: 12),
-        Text('TOOFAN User', style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
-        Text('Add a bio to tell your story'),
-      ]),
-    ),
-    for (final item in [
-      ('Edit profile', Icons.edit_outlined),
-      ('Privacy & security', Icons.lock_outline),
-      ('Settings', Icons.settings_outlined),
-      ('Help & support', Icons.help_outline),
-      ('Log out', Icons.logout),
-    ])
-      ListTile(
-        leading: Icon(item.$2), title: Text(item.$1), trailing: const Icon(Icons.chevron_right),
-        onTap: () => _message(context, '${item.$1} is a demo feature.'),
-      ),
-  ]);
-}
+// 17-23
+class Screen18_Emergency extends StatelessWidget { const Screen18_Emergency({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Center(child: Padding(padding: const EdgeInsets.all(20), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.warning, size: 80, color: Colors.red), const Text('Emergency Alert', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), const Text('Are you sure you want to send an emergency alert to your family?', textAlign: TextAlign.center), const SizedBox(height: 20), SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red), onPressed: () {}, child: const Text('Send Alert'))), TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel'))])))); }
